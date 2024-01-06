@@ -1,0 +1,46 @@
+<template>
+  <nav class="side-navbar">
+    <ul>
+      <li @click="openForm('start')">Start</li>
+      <li @click="openForm('run')">Run</li>
+      <li @click="openForm('checkpoint')">Checkpoint</li>
+      <li @click="openForm('migrate')">Migrate</li>
+      <!-- Add more navigation links as needed -->
+    </ul>
+  </nav>
+</template>
+
+<script>
+export default {
+  methods: {
+    openForm(route) {
+      this.$emit('open-form', route);
+    },
+  },
+};
+</script>
+
+<style scoped>
+/* Your styles for the side navbar go here */
+.side-navbar {
+  width: 200px;
+  background-color: #333;
+  color: white;
+  padding: 20px;
+}
+
+.side-navbar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.side-navbar li {
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.side-navbar a {
+  text-decoration: none;
+  color: white;
+}
+</style>
