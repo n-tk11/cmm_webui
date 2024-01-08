@@ -178,7 +178,7 @@ export default {
           },
           body: JSON.stringify(formData.value),
         });
-
+        $emit('submit-form', formData.value)
         if (response.ok) {
           console.log('Form submitted successfully');
           // Optionally, close the form or perform other actions upon successful submission

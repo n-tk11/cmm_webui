@@ -33,6 +33,7 @@ export default {
       // Logic to handle form submission based on the form type
       console.log(`Form submitted for ${this.formType} with data:`, formData);
       // Close the form after submission
+      this.$emit('form-submitted');
       this.closeForm();
     },
     handleFormSubmit() {

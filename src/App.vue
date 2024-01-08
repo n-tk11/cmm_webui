@@ -28,7 +28,8 @@
       <!-- <DivWrapper /> -->
       <!-- <Div /> -->
     </div>
-    <FormContainer v-if="showFormOverlay" :formType="currentFormType" @close-form="closeForm"></FormContainer>
+    <FormContainer v-if="showFormOverlay" :formType="currentFormType" @close-form="closeForm" @form-submitted="fetchData">
+    </FormContainer>
   </div>
   <RouterView />
 </template>
@@ -46,7 +47,7 @@ const servTableHeaders = ['Name', 'ChkFiles', 'Image']
 const tableRows = ref([]);
 const servTableRows = ref([]);
 
-onMounted(async () => {
+const fetchData = async () => {
   try {
     const response = await fetch('http://localhost:8080/cm_manager/v1.0/worker');
     const data = await response.json();
@@ -61,7 +62,9 @@ onMounted(async () => {
   } catch (error) {
     console.error('Error fetching data:', error);
   }
-});
+}
+
+onMounted(fetchData);
 
 const showFormOverlay = ref(false);
 const currentFormType = ref('');
