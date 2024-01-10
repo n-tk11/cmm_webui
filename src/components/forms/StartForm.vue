@@ -46,81 +46,13 @@
 </template>
 
 <script>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, defineComponent } from 'vue';
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 
-/*
-export default {
-  setup() {
-    onMounted(fetchData);
-  },
-  data() {
-    return {
-      formData: {
-        container_name: '',
-        image: '',
-        app_port: '',
-        envs: [],
-        mounts: [
-          {
-            type: 'bind',
-            source: '',
-            target: '',
-            readonly: false,
-          },
-        ],
-        caps: [],
-      },
-      envsText: '',
-      capsText: '',
-      workers: [],
-      services: [],
-      startWorker: '',
-    };
-  },
-  methods: {
+export default defineComponent({
 
-    async submitForm() {
-      // Convert newline-separated strings to arrays
-      this.formData.envs = this.envsText.split('\n').filter(env => env.trim() !== '');
-      this.formData.caps = this.capsText.split('\n').filter(cap => cap.trim() !== '');
-      const url = `http://localhost:8080/cm_manager/v1.0/start/${this.startWorker}/${this.formData.container_name}`;
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData.value),
-        });
-
-        if (response.ok) {
-          console.log('Form submitted successfully');
-          // Optionally, close the form or perform other actions upon successful submission
-        } else {
-          console.error('Error submitting form:', response.statusText);
-          // Handle the error as needed
-        }
-      } catch (error) {
-        console.error('Error submitting form:', error);
-        // Handle the error as needed
-      }
-    },
-    addMount() {
-      this.formData.mounts.push({
-        type: 'bind',
-        source: '',
-        target: '',
-        readonly: false,
-      });
-    },
-    removeMount(index) {
-      this.formData.mounts.splice(index, 1);
-    },
-  },
-};
-*/
-export default {
-  setup() {
+  setup(props, { emit }) {
     const formData = ref({
       container_name: '',
       image: '',
@@ -178,18 +110,24 @@ export default {
           },
           body: JSON.stringify(formData.value),
         });
-        $emit('submit-form', formData.value)
+        emit('submit-form', formData.value);
         if (response.ok) {
           console.log('Form submitted successfully');
-          // Optionally, close the form or perform other actions upon successful submission
+          const msg = `Service(${formData.value.container_name})'s container is now started on ${startWorker.value}`;
+          toast.success("Start Service's Container Successfully!");
         } else {
           console.error('Error submitting form:', response.statusText);
+          const errorText = await response.text();
+          toast.error(errorText);
           // Handle the error as needed
         }
       } catch (error) {
+        const errorText = 'Error submitting form: ' + error.message;
         console.error('Error submitting form:', error);
+        toast.error(errorText);
         // Handle the error as needed
       }
+      emit('submit-form', formData.value);
     };
     onMounted(fetchData);
     const addMount = () => {
@@ -217,7 +155,7 @@ export default {
       removeMount,
     };
   },
-};
+});
 </script>
 
 <style scoped>

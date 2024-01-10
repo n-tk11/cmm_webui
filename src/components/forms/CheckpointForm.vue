@@ -43,42 +43,11 @@
 </template>
 
 <script>
-import { onMounted, ref } from 'vue';
-export default {
-
-  methods: {
-    async submitForm() {
-      // Convert newline-separated strings to arrays
-      this.formData.envs = this.envsText.split('\n').filter(env => env.trim() !== '');
-
-      // Emit an event to inform the parent component about the form submission
-      this.$emit('submit-form', this.formData);
-
-      console.log('Form Data:', this.formData);
-      try {
-        const url = `http://localhost:8080/cm_manager/v1.0/checkpoint/${this.chkWorker}/${this.formData.container_name}`;
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData.value),
-        });
-
-        if (response.ok) {
-          console.log('Form submitted successfully');
-          // Optionally, close the form or perform other actions upon successful submission
-        } else {
-          console.error('Error submitting form:', response.statusText);
-          // Handle the error as needed
-        }
-      } catch (error) {
-        console.error('Error submitting form:', error);
-        // Handle the error as needed
-      }
-    },
-  },
-  setup() {
+import { onMounted, ref, defineComponent } from 'vue';
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
+export default defineComponent({
+  setup(props, { emit }) {
     const formData = ref({
       leave_running: false,
       image_url: '',
@@ -107,18 +76,24 @@ export default {
           },
           body: JSON.stringify(formData.value),
         });
-        $emit('submit-form', formData.value)
         if (response.ok) {
           console.log('Form submitted successfully');
-          // Optionally, close the form or perform other actions upon successful submission
+          const msg = `Service(${formData.value.container_name}) on ${chkWorker.value} is checkpointed`;
+          toast.success(msg)
         } else {
           console.error('Error submitting form:', response.statusText);
+          const errorText = await response.text();
+          errorText = response.statusText + ' ' + errorText;
+          toast.error(errorText);
           // Handle the error as needed
         }
       } catch (error) {
         console.error('Error submitting form:', error);
+        const errorText = 'Error submitting form: ' + error.message;
+        toast.error(errorText);
         // Handle the error as needed
       }
+      emit('submit-form', formData.value);
     };
     const workers = ref([]);
     const services = ref([]);
@@ -154,7 +129,7 @@ export default {
       envsText,
     };
   },
-};
+});
 </script>
 
 <style scoped>

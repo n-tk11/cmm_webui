@@ -131,9 +131,11 @@
 </template>
 
 <script>
-import { onMounted, ref } from 'vue';
-export default {
-  setup() {
+import { onMounted, ref, defineComponent } from 'vue';
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
+export default defineComponent({
+  setup(props, { emit }) {
     const formData = ref({
       run: {
         app_args: '',
@@ -216,18 +218,22 @@ export default {
           },
           body: JSON.stringify(combinedFormData),
         });
-        $emit('submit-form', formData.value)
         if (response.ok) {
           console.log('Form submitted successfully');
-          // Optionally, close the form or perform other actions upon successful submission
+          const msg = 'Service migrated successfully from ' + srcWorker.value + ' to ' + destWorker.value + '!';
+          toast.success(msg)
         } else {
           console.error('Error submitting form:', response.statusText);
-          // Handle the error as needed
+          const errorText = await response.text();
+          toast.error(errorText);
         }
       } catch (error) {
         console.error('Error submitting form:', error);
+        const errorText = 'Error submitting form: ' + error.message;
+        toast.error(errorText);
         // Handle the error as needed
       }
+      emit('submit-form', formData.value);
     };
     const workers = ref([]);
     const services = ref([]);
@@ -270,7 +276,7 @@ export default {
       submitCombinedForm,
     };
   },
-};
+});
 </script>
 
 
