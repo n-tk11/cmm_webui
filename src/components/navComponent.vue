@@ -5,7 +5,8 @@
       <li @click="openForm('run')">Run</li>
       <li @click="openForm('checkpoint')">Checkpoint</li>
       <li @click="openForm('migrate')">Migrate</li>
-      <!-- Add more navigation links as needed -->
+      <li @click="openForm('stop')">
+        Stop</li>
     </ul>
   </nav>
 </template>

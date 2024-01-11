@@ -7,40 +7,47 @@
       <!-- Add more options as needed -->
     </select>
     <label for="containerName">Service(container) Name:</label>
-    <select id="containerName" v-model="formData.container_name">
+    <select id="containerName" v-model="formData.container_name" @change="fetchConfig">
       <option v-for="service in services" :key="service" :value="service">{{ service }}</option>
     </select>
     <br>
     <label for="appPort">App Port:</label>
     <input type="text" id="appPort" v-model="formData.app_port" />
     <br>
-    <label for="envs">Environment Variables:</label>
-    <textarea id="envs" v-model="envsText" placeholder="ENV1=value1&#10;ENV2=value2"></textarea>
-
-    <div v-for="(mount, index) in formData.mounts" :key="index">
+    <div v-for="(mount, index) in formData.mounts" :key="index" style="padding: 5px;">
       <label for="mountType">Mount Type:</label>
-      <select v-model="mount.type">
+      <select v-model="mount.Type">
         <option value="bind">Bind</option>
         <option value="volume">Volume</option>
         <!-- Add more options as needed -->
       </select>
 
       <label for="mountSource">Mount Source:</label>
-      <input type="text" v-model="mount.source" />
+      <input type="text" v-model="mount.Source" />
 
       <label for="mountTarget">Mount Target:</label>
-      <input type="text" v-model="mount.target" />
+      <input type="text" v-model="mount.Target" />
 
       <label for="mountReadonly">Mount Readonly:</label>
-      <input type="checkbox" v-model="mount.readonly" />
+      <input type="checkbox" v-model="mount.ReadOnly" />
 
       <button @click="removeMount(index)">Remove Mount</button>
     </div>
-    <button @click="addMount">Add Mount</button>
+    <button @click="addMount" style="margin: 5px;">Add Mount</button>
     <br>
-    <label for="caps">Capabilities:</label>
-    <textarea id="caps" v-model="capsText" placeholder="CAP1&#10;CAP2"></textarea>
-
+    <button @click="toggleVisibility" style="margin-bottom: 5px;">
+      <span v-if="!isSectionVisible">▼</span>
+      <span v-else>▲</span>
+      Advance Config
+    </button>
+    <div v-if="isSectionVisible" style="padding: 0px;">
+      <label for="envs">Environment Variables:</label>
+      <textarea id="envs" v-model="envsText" placeholder="ENV1=value1&#10;ENV2=value2"></textarea>
+      <br>
+      <label for="caps">Capabilities:</label>
+      <textarea id="caps" v-model="capsText" placeholder="CAP1&#10;CAP2"></textarea>
+    </div>
+    <br>
     <button @click="submitForm">Submit</button>
   </div>
 </template>
@@ -60,10 +67,10 @@ export default defineComponent({
       envs: [],
       mounts: [
         {
-          type: 'bind',
-          source: '',
-          target: '',
-          readonly: false,
+          Type: 'bind',
+          Source: '',
+          Target: '',
+          ReadOnly: false,
         },
       ],
       caps: [],
@@ -96,7 +103,24 @@ export default defineComponent({
         console.log(error);
       }
     };
-
+    const fetchConfig = async () => {
+      try {
+        const url = `http://localhost:8080/cm_manager/v1.0/service/${formData.value.container_name}/config`;
+        const response = await fetch(url);
+        if (response.ok) {
+          const data = await response.json();
+          formData.value.app_port = data.start_opt.app_port;
+          formData.value.mounts = data.start_opt.mounts;
+          envsText.value = data.start_opt.envs.join('\n');
+          capsText.value = data.start_opt.caps.join('\n');
+          console.log(data.start_opt.mounts);
+        } else {
+          throw new Error('Request services failed!');
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
     const submitForm = async () => {
       // Convert newline-separated strings to arrays
       formData.value.envs = envsText.value.split('\n').filter(env => env.trim() !== '');
@@ -132,17 +156,20 @@ export default defineComponent({
     onMounted(fetchData);
     const addMount = () => {
       formData.value.mounts.push({
-        type: 'bind',
-        source: '',
-        target: '',
-        readonly: false,
+        Type: 'bind',
+        Source: '',
+        Target: '',
+        ReadOnly: false,
       });
     };
 
     const removeMount = (index) => {
       formData.value.mounts.splice(index, 1);
     };
-
+    const isSectionVisible = ref(false);
+    const toggleVisibility = () => {
+      isSectionVisible.value = !isSectionVisible.value;
+    };
     return {
       formData,
       envsText,
@@ -153,6 +180,9 @@ export default defineComponent({
       submitForm,
       addMount,
       removeMount,
+      fetchConfig,
+      isSectionVisible,
+      toggleVisibility,
     };
   },
 });

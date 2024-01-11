@@ -21,112 +21,131 @@
     </div>
     <div style="padding: 0%; margin-left: 18px;">
       <label for="serviceName">Service:</label>
-      <select id="serviceName" v-model="formData.start.container_name">
+      <select id="serviceName" v-model="formData.start.container_name" @change="fetchConfig">
         source
         <option v-for="service in services" :key="service" :value="service">{{ service }}</option>
       </select>
     </div>
 
     <!-- Checkpoint Form -->
-    <h3>Checkpoint Configuration</h3>
+    <h3>Checkpoint Configuration(at source)</h3>
     <label for="leaveRunning">Leave Running:</label>
     <input type="checkbox" id="leaveRunning" v-model="formData.checkpoint.leave_running" />
-
-    <label for="imageUrl">Image URL:</label>
-    <input type="text" id="imageUrl" v-model="formData.checkpoint.image_url" />
-
-    <label for="passphraseFile">Passphrase File:</label>
-    <input type="text" id="passphraseFile" v-model="formData.checkpoint.passphrase_file" />
     <br>
-    <label for="preservedPaths">Preserved Paths:</label>
-    <input type="text" id="preservedPaths" v-model="formData.checkpoint.preserved_paths" />
+    <button @click="toggleVisibility('chk')">
+      <span v-if="!isChkVisible">▼</span>
+      <span v-else>▲</span>
+      Advance Checkpoint Config
+    </button>
+    <div v-if="isChkVisible">
+      <label for="passphraseFile">Passphrase File:</label>
+      <input type="text" id="passphraseFile" v-model="formData.checkpoint.passphrase_file" />
+      <br>
+      <label for="preservedPaths">Preserved Paths:</label>
+      <input type="text" id="preservedPaths" v-model="formData.checkpoint.preserved_paths" />
 
-    <label for="numShards">Number of Shards:</label>
-    <input type="number" min="1" id="numShards" v-model="formData.checkpoint.num_shards" />
+      <label for="numShards">Number of Shards:</label>
+      <input type="number" min="1" id="numShards" v-model="formData.checkpoint.num_shards" />
 
-    <label for="cpuBudget">CPU Budget:</label>
-    <select id="cpuBudget" v-model="formData.checkpoint.cpu_budget">
-      <option value="low">Low</option>
-      <option value="medium">Medium</option>
-      <option value="high">High</option>
-    </select>
+      <label for="cpuBudget">CPU Budget:</label>
+      <select id="cpuBudget" v-model="formData.checkpoint.cpu_budget">
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
 
-    <label for="verbose">Verbose:</label>
-    <input type="number" id="verbose" min="1" v-model="formData.checkpoint.verbose" />
+      <label for="verbose">Verbose:</label>
+      <input type="number" id="verbose" min="1" v-model="formData.checkpoint.verbose" />
 
-    <label for="envs">Environment Variables:</label>
-    <textarea id="envs" v-model="chkEnvsText" placeholder="ENV1=value1&#10;ENV2=value2"></textarea>
+      <label for="envs">Environment Variables:</label>
+      <textarea id="envs" v-model="chkEnvsText" placeholder="ENV1=value1&#10;ENV2=value2"></textarea>
+    </div>
     <br>
-    <!-- Run Form -->
-    <h3>Run Configuration</h3>
-    <label for="appArgs">App Arguments:</label>
-    <input type="text" id="appArgs" style="width: 300px;" v-model="formData.run.app_args" />
-    <br>
-    <label for="imageUrl">Image URL:</label>
-    <input type="text" id="imageUrl" style="width: 300px;" v-model="formData.run.image_url" />
-    <br>
-    <label for="onAppReady">On App Ready Script:</label>
-    <input type="text" id="onAppReady" style="width: 300px;" v-model="formData.run.on_app_ready" />
-    <br>
-    <label for="passphraseFile">Passphrase File:</label>
-    <input type="text" id="passphraseFile" style="width: 300px;" v-model="formData.run.passphrase_file" />
-    <br>
-    <label for="preservedPaths">Preserved Paths:</label>
-    <input type="text" id="preservedPaths" style="width: 300px;" v-model="formData.run.preserved_paths" />
-    <br>
-    <label for="noRestore">No Restore:</label>
-    <input type="checkbox" id="noRestore" v-model="formData.run.no_restore" />
-
-    <label for="allowBadImage">Allow Bad Image:</label>
-    <input type="checkbox" id="allowBadImage" v-model="formData.run.allow_bad_image" />
-
-    <label for="leaveStopped">Leave Stopped:</label>
-    <input type="checkbox" id="leaveStopped" v-model="formData.run.leave_stopped" />
-
-    <label for="verbose">Verbose:</label>
-    <select id="verbose" v-model="formData.run.verbose">
-      <option type="number" value=1>1</option>
-      <option type="number" value=2>2</option>
-      <option type="number" value=3>3</option>
-    </select>
-    <br>
-    <label for="envs">Environment Variables:</label>
-    <textarea id="envs" v-model="runEnvsText" placeholder="ENV1=value1&#10;ENV2=value2"></textarea>
-    <br>
-
     <!-- Start Form -->
-    <h3>Start Configuration</h3>
+    <h3>Start Configuration(at source)</h3>
 
     <label for="appPort">App Port:</label>
     <input type="text" id="appPort" v-model="formData.start.app_port" />
     <br>
-    <label for="envs">Environment Variables:</label>
-    <textarea id="envs" v-model="startEnvsText" placeholder="ENV1=value1&#10;ENV2=value2"></textarea>
 
     <div v-for="(mount, index) in formData.start.mounts" :key="index">
       <label for="mountType">Mount Type:</label>
-      <select v-model="mount.type">
+      <select v-model="mount.Type">
         <option value="bind">Bind</option>
         <option value="volume">Volume</option>
         <!-- Add more options as needed -->
       </select>
 
       <label for="mountSource">Mount Source:</label>
-      <input type="text" v-model="mount.source" />
+      <input type="text" v-model="mount.Source" />
 
       <label for="mountTarget">Mount Target:</label>
-      <input type="text" v-model="mount.target" />
+      <input type="text" v-model="mount.Target" />
 
       <label for="mountReadonly">Mount Readonly:</label>
-      <input type="checkbox" v-model="mount.readonly" />
+      <input type="checkbox" v-model="mount.ReadOnly" />
 
       <button @click="removeMount(index)">Remove Mount</button>
     </div>
-    <button @click="addMount">Add Mount</button>
+    <button @click="addMount" style="margin: 5px;">Add Mount</button>
     <br>
-    <label for="caps">Capabilities:</label>
-    <textarea id="caps" v-model="capsText" placeholder="CAP1&#10;CAP2"></textarea>
-    <button @click="submitCombinedForm">Submit Combined Form</button>
+    <button @click="toggleVisibility('str')">
+      <span v-if="!isStrVisible">▼</span>
+      <span v-else>▲</span>
+      Advance Start Config
+    </button>
+    <div v-if="isStrVisible">
+      <label for="envs">Environment Variables:</label>
+      <textarea id="envs" v-model="startEnvsText" placeholder="ENV1=value1&#10;ENV2=value2"></textarea>
+      <br>
+      <label for="caps">Capabilities:</label>
+      <textarea id="caps" v-model="capsText" placeholder="CAP1&#10;CAP2"></textarea>
+    </div>
+    <!-- Run Form -->
+    <h3>Run Configuration(at destination)</h3>
+    <label for="appArgs">App Arguments:</label>
+    <input type="text" id="appArgs" style="width: 300px;" v-model="formData.run.app_args" />
+    <br>
+    <label for="imageUrl">Image URL:</label>
+    <input type="text" id="imageUrl" style="width: 300px;" v-model="formData.run.image_url" />
+    <br>
+    <button @click="toggleVisibility('run')" style="margin-bottom: 5px;">
+      <span v-if="!isRunVisible">▼</span>
+      <span v-else>▲</span>
+      Advance Run Config
+    </button>
+    <div v-if="isRunVisible">
+      <label for="onAppReady">On App Ready Script:</label>
+      <input type="text" id="onAppReady" style="width: 300px;" v-model="formData.run.on_app_ready" />
+      <br>
+      <label for="passphraseFile">Passphrase File:</label>
+      <input type="text" id="passphraseFile" style="width: 300px;" v-model="formData.run.passphrase_file" />
+      <br>
+      <label for="preservedPaths">Preserved Paths:</label>
+      <input type="text" id="preservedPaths" style="width: 300px;" v-model="formData.run.preserved_paths" />
+      <br>
+      <label for="noRestore">No Restore:</label>
+      <input type="checkbox" id="noRestore" v-model="formData.run.no_restore" />
+
+      <label for="allowBadImage">Allow Bad Image:</label>
+      <input type="checkbox" id="allowBadImage" v-model="formData.run.allow_bad_image" />
+
+      <label for="leaveStopped">Leave Stopped:</label>
+      <input type="checkbox" id="leaveStopped" v-model="formData.run.leave_stopped" />
+
+      <label for="verbose">Verbose:</label>
+      <select id="verbose" v-model="formData.run.verbose">
+        <option type="number" value=1>1</option>
+        <option type="number" value=2>2</option>
+        <option type="number" value=3>3</option>
+      </select>
+      <br>
+      <label for="envs">Environment Variables:</label>
+      <textarea id="envs" v-model="runEnvsText" placeholder="ENV1=value1&#10;ENV2=value2"></textarea>
+      <br>
+    </div>
+    <br>
+    <button @click="submitCombinedForm">Submit Migration Form</button>
   </div>
 </template>
 
@@ -156,10 +175,10 @@ export default defineComponent({
         envs: [],
         mounts: [
           {
-            type: 'bind',
-            source: '',
-            target: '',
-            readonly: false,
+            Type: 'bind',
+            Source: '',
+            Target: '',
+            ReadOnly: false,
           },
         ],
         caps: [],
@@ -186,10 +205,10 @@ export default defineComponent({
 
     const addMount = () => {
       formData.value.start.mounts.push({
-        type: 'bind',
-        source: '',
-        target: '',
-        readonly: false,
+        Type: 'bind',
+        Source: '',
+        Target: '',
+        ReadOnly: false,
       });
     };
     const removeMount = (index) => {
@@ -258,6 +277,42 @@ export default defineComponent({
       }
     };
 
+    const fetchConfig = async () => {
+      try {
+        const url = `http://localhost:8080/cm_manager/v1.0/service/${formData.value.start.container_name}/config`;
+        const response = await fetch(url);
+        if (response.ok) {
+          const data = await response.json();
+          formData.value.run = data.run_opt;
+          formData.value.start = data.start_opt;
+          formData.value.checkpoint = data.chk_opt;
+          runEnvsText.value = data.run_opt.envs.join('\n');
+          chkEnvsText.value = data.chk_opt.envs.join('\n');
+          startEnvsText.value = data.start_opt.envs.join('\n');
+          capsText.value = data.start_opt.caps.join('\n');
+        } else {
+          throw new Error('Request services failed!');
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    const isChkVisible = ref(false);
+    const isRunVisible = ref(false);
+    const isStrVisible = ref(false);
+    const toggleVisibility = (sec) => {
+      switch (sec) {
+        case "chk":
+          isChkVisible.value = !isChkVisible.value;
+          break;
+        case "run":
+          isRunVisible.value = !isRunVisible.value;
+          break;
+        case "str":
+          isStrVisible.value = !isStrVisible.value;
+          break;
+      }
+    };
     onMounted(fetchData);
 
     return {
@@ -274,6 +329,11 @@ export default defineComponent({
       addMount,
       removeMount,
       submitCombinedForm,
+      fetchConfig,
+      toggleVisibility,
+      isChkVisible,
+      isRunVisible,
+      isStrVisible,
     };
   },
 });

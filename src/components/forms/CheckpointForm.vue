@@ -6,38 +6,45 @@
       <option v-for="worker in workers" :key="worker" :value="worker">{{ worker }}</option>
     </select>
     <label for="containerName">Service Name:</label>
-    <select id="containerName" v-model="formData.container_name">
+    <select id="containerName" v-model="formData.container_name" @change="fetchConfig">
       <option v-for="service in services" :key="service" :value="service">{{ service }}</option>
     </select>
     <br>
-    <label for="leaveRunning">Leave Running:</label>
-    <input type="checkbox" id="leaveRunning" v-model="formData.leave_running" />
+    <button @click="toggleVisibility" style="margin-bottom: 5px;">
+      <span v-if="!isSectionVisible">▼</span>
+      <span v-else>▲</span>
+      Advance Config
+    </button>
+    <div v-if="isSectionVisible" style="padding: 0px;">
+      <label for="leaveRunning">Leave Running:</label>
+      <input type="checkbox" id="leaveRunning" v-model="formData.leave_running" />
 
-    <label for="imageUrl">Image URL:</label>
-    <input type="text" id="imageUrl" v-model="formData.image_url" />
+      <label for="imageUrl">Image URL:</label>
+      <input type="text" id="imageUrl" v-model="formData.image_url" />
 
-    <label for="passphraseFile">Passphrase File:</label>
-    <input type="text" id="passphraseFile" v-model="formData.passphrase_file" />
+      <label for="passphraseFile">Passphrase File:</label>
+      <input type="text" id="passphraseFile" v-model="formData.passphrase_file" />
+      <br>
+      <label for="preservedPaths">Preserved Paths:</label>
+      <input type="text" id="preservedPaths" v-model="formData.preserved_paths" />
+
+      <label for="numShards">Number of Shards:</label>
+      <input type="number" min="1" id="numShards" v-model="formData.num_shards" />
+
+      <label for="cpuBudget">CPU Budget:</label>
+      <select id="cpuBudget" v-model="formData.cpu_budget">
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
+
+      <label for="verbose">Verbose:</label>
+      <input type="number" id="verbose" min="1" v-model="formData.verbose" />
+      <br>
+      <label for="envs">Environment Variables:</label>
+      <textarea id="envs" v-model="envsText" placeholder="ENV1=value1&#10;ENV2=value2"></textarea>
+    </div>
     <br>
-    <label for="preservedPaths">Preserved Paths:</label>
-    <input type="text" id="preservedPaths" v-model="formData.preserved_paths" />
-
-    <label for="numShards">Number of Shards:</label>
-    <input type="number" min="1" id="numShards" v-model="formData.num_shards" />
-
-    <label for="cpuBudget">CPU Budget:</label>
-    <select id="cpuBudget" v-model="formData.cpu_budget">
-      <option value="low">Low</option>
-      <option value="medium">Medium</option>
-      <option value="high">High</option>
-    </select>
-
-    <label for="verbose">Verbose:</label>
-    <input type="number" id="verbose" min="1" v-model="formData.verbose" />
-
-    <label for="envs">Environment Variables:</label>
-    <textarea id="envs" v-model="envsText" placeholder="ENV1=value1&#10;ENV2=value2"></textarea>
-
     <button @click="submitForm">Submit</button>
   </div>
 </template>
@@ -117,9 +124,32 @@ export default defineComponent({
         console.log(error);
       }
     };
-
+    const fetchConfig = async () => {
+      try {
+        const url = `http://localhost:8080/cm_manager/v1.0/service/${formData.value.container_name}/config`;
+        const response = await fetch(url);
+        if (response.ok) {
+          const data = await response.json();
+          formData.value.leave_running = data.chk_opt.leave_running;
+          formData.value.image_url = data.chk_opt.image_url;
+          formData.value.passphrase_file = data.chk_opt.passphrase_file;
+          formData.value.preserved_paths = data.chk_opt.preserved_paths;
+          formData.value.num_shards = data.chk_opt.num_shards;
+          formData.value.cpu_budget = data.chk_opt.cpu_budget;
+          formData.value.verbose = data.chk_opt.verbose;
+          envsText.value = data.chk_opt.envs.join('\n');
+        } else {
+          throw new Error('Request services failed!');
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
     onMounted(fetchData);
-
+    const isSectionVisible = ref(false);
+    const toggleVisibility = () => {
+      isSectionVisible.value = !isSectionVisible.value;
+    };
     return {
       workers,
       services,
@@ -127,6 +157,9 @@ export default defineComponent({
       formData,
       chkWorker,
       envsText,
+      fetchConfig,
+      isSectionVisible,
+      toggleVisibility,
     };
   },
 });

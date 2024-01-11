@@ -13,6 +13,7 @@ import StartForm from './forms/StartForm.vue';
 import RunForm from './forms/RunForm.vue';
 import CheckpointForm from './forms/CheckpointForm.vue';
 import MigrateForm from './forms/MigrateForm.vue';
+import StopForm from './forms/StopForm.vue'
 
 export default {
   props: {
@@ -53,7 +54,8 @@ export default {
           return CheckpointForm;
         case 'migrate':
           return MigrateForm;
-        // Add more cases for other form types
+        case 'stop':
+          return StopForm;
         default:
           return null; // Default to no form
       }
