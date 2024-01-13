@@ -2,9 +2,9 @@
   <div>
     <h2>Add Worker Form</h2>
     <label for="workerName">Worker Name:</label>
-    <input type="text" id="workerName" v-model="worker.worker_name">
+    <input type="text" id="workerName" v-model="worker.worker_id">
     <label for="addr">Worker address and port:</label>
-    <input type="text" id="addr" v-model="worker.worker_addr" placeholder="10.0.1.11:7878">
+    <input type="text" id="addr" v-model="worker.addr" placeholder="10.0.1.11:7878">
     <br>
     <button @click="submitForm">Submit</button>
   </div>
@@ -17,8 +17,8 @@ import 'vue3-toastify/dist/index.css';
 export default defineComponent({
   setup(props, { emit }) {
     const worker = ref({
-      worker_name: '',
-      worker_addr: '',
+      worker_id: '',
+      addr: '',
     });
     const submitForm = async () => {
       try {
@@ -35,11 +35,10 @@ export default defineComponent({
           const msg = `Worker ${worker.value.worker_name} with addr ${worker.value.worker_addr} is added`;
           toast.success(msg)
         } else {
-          console.error('Error submitting form:', response.statusText);
           const errorText = await response.text();
-          errorText = response.statusText + ' ' + errorText;
-          toast.error(errorText);
-          // Handle the error as needed
+          const errorJson = JSON.parse(errorText);
+          console.error('Error submitting form:', errorJson.error);
+          toast.error(errorJson.error);
         }
       } catch (error) {
         console.error('Error submitting form:', error);

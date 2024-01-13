@@ -95,10 +95,10 @@ export default defineComponent({
           // Handle the error as needed
         }
       } catch (error) {
-        console.error('Error submitting form:', error);
-        const errorText = 'Error submitting form: ' + error.message;
-        toast.error(errorText);
-        // Handle the error as needed
+        const errorText = await response.text();
+        const errorJson = JSON.parse(errorText);
+        console.error('Error submitting form:', errorJson.error);
+        toast.error(errorJson.error);
       }
       emit('submit-form', formData.value);
     };

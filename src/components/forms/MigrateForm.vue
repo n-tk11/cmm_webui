@@ -242,9 +242,10 @@ export default defineComponent({
           const msg = 'Service migrated successfully from ' + srcWorker.value + ' to ' + destWorker.value + '!';
           toast.success(msg)
         } else {
-          console.error('Error submitting form:', response.statusText);
           const errorText = await response.text();
-          toast.error(errorText);
+          const errorJson = JSON.parse(errorText);
+          console.error('Error submitting form:', errorJson.error);
+          toast.error(errorJson.error);
         }
       } catch (error) {
         console.error('Error submitting form:', error);

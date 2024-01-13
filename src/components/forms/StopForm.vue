@@ -33,11 +33,10 @@ export default defineComponent({
           const msg = `Service(${service.value}) on ${stopWorker.value} is stopped`;
           toast.success(msg)
         } else {
-          console.error('Error submitting form:', response.statusText);
           const errorText = await response.text();
-          errorText = response.statusText + ' ' + errorText;
-          toast.error(errorText);
-          // Handle the error as needed
+          const errorJson = JSON.parse(errorText);
+          console.error('Error submitting form:', errorJson.error);
+          toast.error(errorJson.error);
         }
       } catch (error) {
         console.error('Error submitting form:', error);

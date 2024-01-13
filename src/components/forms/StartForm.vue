@@ -140,10 +140,10 @@ export default defineComponent({
           const msg = `Service(${formData.value.container_name})'s container is now started on ${startWorker.value}`;
           toast.success("Start Service's Container Successfully!");
         } else {
-          console.error('Error submitting form:', response.statusText);
           const errorText = await response.text();
-          toast.error(errorText);
-          // Handle the error as needed
+          const errorJson = JSON.parse(errorText);
+          console.error('Error submitting form:', errorJson.error);
+          toast.error(errorJson.error);
         }
       } catch (error) {
         const errorText = 'Error submitting form: ' + error.message;

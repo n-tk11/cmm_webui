@@ -2,9 +2,9 @@
   <div>
     <h2>Add Service Form</h2>
     <label for="serviceName">Service Name:</label>
-    <input type="text" id="serviceName" v-model="service.serviceName">
+    <input type="text" id="serviceName" v-model="service.name">
     <label for="serviceImage">Image Name and tag:</label>
-    <input type="text" id="serviceImage" v-model="service.serviceImage" placeholder="ffdev:10">
+    <input type="text" id="serviceImage" v-model="service.image" placeholder="ffdev:10">
     <br>
     <button @click="submitForm">Submit</button>
   </div>
@@ -17,8 +17,8 @@ import 'vue3-toastify/dist/index.css';
 export default defineComponent({
   setup(props, { emit }) {
     const service = ref({
-      serviceName: '',
-      serviceImage: '',
+      name: '',
+      image: '',
     });
     const submitForm = async () => {
       try {
@@ -30,16 +30,16 @@ export default defineComponent({
           },
           body: JSON.stringify(service.value),
         });
+        console.log(service.value);
         if (response.ok) {
           console.log('Form submitted successfully');
           const msg = `Service ${service.value.serviceName} with image ${service.value.serviceImage} is added`;
           toast.success(msg)
         } else {
-          console.error('Error submitting form:', response.statusText);
           const errorText = await response.text();
-          errorText = response.statusText + ' ' + errorText;
-          toast.error(errorText);
-          // Handle the error as needed
+          const errorJson = JSON.parse(errorText);
+          console.error('Error submitting form:', errorJson.error);
+          toast.error(errorJson.error);
         }
       } catch (error) {
         console.error('Error submitting form:', error);
