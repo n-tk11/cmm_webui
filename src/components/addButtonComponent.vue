@@ -1,9 +1,10 @@
 
 <template>
-  <div class="add-button">
-    <div class="text-wrapper">Add a worker</div>
+  <!-- <div class="add-button">
+    <div class="text-wrapper" @click="openForm('addWorker')">Add a worker</div>
     <Add24Px class="content-add" />
-  </div>
+  </div> -->
+  <button @click="openForm('addWorker')">Add a worker</button>
 </template>
 
 <script>
@@ -11,6 +12,13 @@
 
 export default {
   name: "AddButton",
+
+  methods: {
+    openForm(route) {
+      this.$emit('open-form', route);
+    },
+  },
+
 };
 </script>
 

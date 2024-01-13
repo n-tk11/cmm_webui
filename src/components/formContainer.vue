@@ -13,7 +13,10 @@ import StartForm from './forms/StartForm.vue';
 import RunForm from './forms/RunForm.vue';
 import CheckpointForm from './forms/CheckpointForm.vue';
 import MigrateForm from './forms/MigrateForm.vue';
-import StopForm from './forms/StopForm.vue'
+import StopForm from './forms/StopForm.vue';
+import RemoveForm from './forms/RemoveForm.vue';
+import AddWorkerForm from './forms/AddWorkerForm.vue';
+import AddServiceForm from './forms/AddServiceForm.vue';
 
 export default {
   props: {
@@ -56,6 +59,12 @@ export default {
           return MigrateForm;
         case 'stop':
           return StopForm;
+        case 'remove':
+          return RemoveForm;
+        case 'addWorker':
+          return AddWorkerForm;
+        case 'addService':
+          return AddServiceForm;
         default:
           return null; // Default to no form
       }

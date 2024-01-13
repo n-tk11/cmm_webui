@@ -9,7 +9,7 @@
         <div class="table-container">
           <Table :headers="tableHeaders" :rows="tableRows"></Table>
           <div class="button-container">
-            <AddButton />
+            <button @click="openForm('addWorker')">Add a worker</button>
           </div>
         </div>
       </div>
@@ -20,7 +20,7 @@
         <div class="table-container" style="top: 10px;">
           <Table :headers="servTableHeaders" :rows="servTableRows"></Table>
           <div class="button-container">
-            <AddButton />
+            <button @click="openForm('addService')">Add a service</button>
           </div>
         </div>
       </div>

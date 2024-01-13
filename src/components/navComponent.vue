@@ -7,6 +7,7 @@
       <li @click="openForm('migrate')">Migrate</li>
       <li @click="openForm('stop')">
         Stop</li>
+      <li @click="openForm('remove')">Remove</li>
     </ul>
   </nav>
 </template>
