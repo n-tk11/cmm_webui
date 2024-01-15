@@ -26,7 +26,7 @@ export default defineComponent({
       try {
         const url = `http://localhost:8080/cm_manager/v1.0/remove/${stopWorker.value}/${service.value}`;
         const response = await fetch(url, {
-          method: 'POST',
+          method: 'DELETE',
         });
         if (response.ok) {
           console.log('Form submitted successfully');
