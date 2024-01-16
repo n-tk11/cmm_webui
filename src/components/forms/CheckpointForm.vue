@@ -67,6 +67,7 @@ export default defineComponent({
     });
     const envsText = ref('');
     const chkWorker = ref('');
+    const root_url = import.meta.env.VITE_API_URL;
     const submitForm = async () => {
       // Convert newline-separated strings to arrays
       formData.value.envs = envsText.value.split('\n').filter(env => env.trim() !== '');
@@ -75,7 +76,7 @@ export default defineComponent({
 
       console.log('Form Data:', formData.value);
       try {
-        const url = `http://localhost:8080/cm_manager/v1.0/checkpoint/${chkWorker.value}/${formData.value.container_name}`;
+        const url = `${root_url}/checkpoint/${chkWorker.value}/${formData.value.container_name}`;
         const response = await fetch(url, {
           method: 'POST',
           headers: {
@@ -106,14 +107,16 @@ export default defineComponent({
     const services = ref([]);
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:8080/cm_manager/v1.0/worker');
+        const url = `${root_url}/worker`;
+        const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();
           workers.value = Array.from(new Set(data.map(item => item.id)));
         } else {
           throw new Error('Request workers failed!');
         }
-        const response2 = await fetch('http://localhost:8080/cm_manager/v1.0/service');
+        const url2 = `${root_url}/service`;
+        const response2 = await fetch(url2);
         if (response2.ok) {
           const data2 = await response2.json();
           services.value = Array.from(new Set(data2.map(item => item.name)));
@@ -126,7 +129,7 @@ export default defineComponent({
     };
     const fetchConfig = async () => {
       try {
-        const url = `http://localhost:8080/cm_manager/v1.0/service/${formData.value.container_name}/config`;
+        const url = `${root_url}/service/${formData.value.container_name}/config`;
         const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();

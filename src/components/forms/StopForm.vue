@@ -22,9 +22,10 @@ export default defineComponent({
   setup(props, { emit }) {
     const stopWorker = ref('');
     const service = ref('');
+    const root_url = import.meta.env.VITE_API_URL;
     const submitForm = async () => {
       try {
-        const url = `http://localhost:8080/cm_manager/v1.0/stop/${stopWorker.value}/${service.value}`;
+        const url = `${root_url}/stop/${stopWorker.value}/${service.value}`;
         const response = await fetch(url, {
           method: 'POST',
         });
@@ -50,14 +51,16 @@ export default defineComponent({
     const services = ref([]);
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:8080/cm_manager/v1.0/worker');
+        const url = `${root_url}/worker`;
+        const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();
           workers.value = Array.from(new Set(data.map(item => item.id)));
         } else {
           throw new Error('Request workers failed!');
         }
-        const response2 = await fetch('http://localhost:8080/cm_manager/v1.0/service');
+        const url2 = `${root_url}/service`;
+        const response2 = await fetch(url2);
         if (response2.ok) {
           const data2 = await response2.json();
           services.value = Array.from(new Set(data2.map(item => item.name)));

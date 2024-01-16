@@ -3,7 +3,7 @@
     <Nav @open-form="openForm"></Nav>
     <div class="div-3">
       <div class="text-wrapper-15">Master: 127.0.0.1:8787</div>
-      <div class="text-wrapper-16">Status: up</div>
+      <div class="text-wrapper-16">Status: {{ managerStatus }}</div>
       <div class="worker-container">
         <div class="text-wrapper-17">Workers</div>
         <div class="table-container">
@@ -46,15 +46,38 @@ const tableHeaders = ['Name', 'Address', 'Services']
 const servTableHeaders = ['Name', 'ChkFiles', 'Image']
 const tableRows = ref([]);
 const servTableRows = ref([]);
+const managerStatus = ref('');
+const root_url = import.meta.env.VITE_API_URL;
+
+const checkIsUp = async () => {
+  try {
+    const url = `${root_url}/up`;
+    const response = await fetch(url);
+    if (response.status === 200) {
+      managerStatus.value = 'up';
+      console.log('Manager is up');
+    } else {
+      managerStatus.value = 'down';
+      console.log('Manager is down');
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    managerStatus.value = 'down';
+  }
+};
 
 const fetchData = async () => {
+  console.log(import.meta.env.VITE_API_URL)
+
   try {
-    const response = await fetch('http://localhost:8080/cm_manager/v1.0/worker');
+    const url = `${root_url}/worker`;
+    const response = await fetch(url);
     const data = await response.json();
     tableRows.value = data.map(item => [item.id, item.addr, item.services]);
     console.log(data);
 
-    const response2 = await fetch('http://localhost:8080/cm_manager/v1.0/service');
+    const url2 = `${root_url}/service`;
+    const response2 = await fetch(url2);
     const data2 = await response2.json();
     servTableRows.value = data2.map(item => [item.name, item.chk_files, item.image]);
     console.log(data2);
@@ -64,7 +87,10 @@ const fetchData = async () => {
   }
 }
 
-onMounted(fetchData);
+onMounted(() => {
+  checkIsUp();
+  fetchData();
+});
 
 const showFormOverlay = ref(false);
 const currentFormType = ref('');

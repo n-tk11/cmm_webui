@@ -20,9 +20,10 @@ export default defineComponent({
       worker_id: '',
       addr: '',
     });
+    const root_url = import.meta.env.VITE_API_URL;
     const submitForm = async () => {
       try {
-        const url = `http://localhost:8080/cm_manager/v1.0/worker`;
+        const url = `${root_url}/worker`;
         const response = await fetch(url, {
           method: 'POST',
           headers: {

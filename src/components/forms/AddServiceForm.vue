@@ -20,9 +20,10 @@ export default defineComponent({
       name: '',
       image: '',
     });
+    const root_url = import.meta.env.VITE_API_URL;
     const submitForm = async () => {
       try {
-        const url = `http://localhost:8080/cm_manager/v1.0/service`;
+        const url = `${root_url}/service`;
         const response = await fetch(url, {
           method: 'POST',
           headers: {
