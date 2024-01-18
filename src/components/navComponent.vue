@@ -29,6 +29,7 @@ export default {
   background-color: #333;
   color: white;
   padding: 20px;
+  overflow: auto;
 }
 
 .side-navbar ul {
