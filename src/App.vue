@@ -79,7 +79,7 @@ const fetchData = async () => {
     const url2 = `${root_url}/service`;
     const response2 = await fetch(url2);
     const data2 = await response2.json();
-    servTableRows.value = data2.map(item => [item.name, item.chk_file, item.image]);
+    servTableRows.value = data2.map(item => [item.name, item.chk_files.reverse(), item.image]);
     console.log(data2);
 
   } catch (error) {

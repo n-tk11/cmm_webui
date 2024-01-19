@@ -14,7 +14,10 @@
     <input type="text" id="appArgs" style="width: 300px;" v-model="formData.app_args" />
     <br>
     <label for="imageUrl">Image URL:</label>
-    <input type="text" id="imageUrl" style="width: 300px;" v-model="formData.image_url" />
+    <select id="imageUrl" v-model="formData.image_url">
+      <option v-for="url in servicesChkF" :key="url" :value="url">{{ url }}</option>
+      <!-- <input type="text" id="imageUrl" style="width: 300px;" v-model="formData.image_url" /> -->
+    </select>
     <br>
     <button @click="toggleVisibility" style="margin-bottom: 5px;">
       <span v-if="!isSectionVisible">▼</span>
@@ -114,6 +117,7 @@ export default defineComponent({
     };
     const workers = ref([]);
     const services = ref([]);
+    const servicesChkF = ref([]);
     const fetchData = async () => {
       try {
         const url = `${root_url}/worker`;
@@ -155,6 +159,14 @@ export default defineComponent({
         } else {
           throw new Error('Request services failed!');
         }
+        const url2 = `${root_url}/service/${service.value}`;
+        const response2 = await fetch(url2);
+        if (response2.ok) {
+          const data2 = await response2.json();
+          servicesChkF.value = data2.chk_files.reverse();
+        } else {
+          throw new Error('Request services failed!');
+        }
       } catch (error) {
         console.log(error);
       }
@@ -175,6 +187,7 @@ export default defineComponent({
       service,
       toggleVisibility,
       isSectionVisible,
+      servicesChkF,
     };
   },
 });
