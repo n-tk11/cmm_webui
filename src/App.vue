@@ -2,7 +2,7 @@
   <div class="home">
     <Nav @open-form="openForm"></Nav>
     <div class="div-3">
-      <div class="text-wrapper-15">Master: 127.0.0.1:8787</div>
+      <div class="text-wrapper-15">Manager: 127.0.0.1:8787</div>
       <div class="text-wrapper-16">Status: {{ managerStatus }}</div>
       <div class="worker-container">
         <div class="text-wrapper-17">Workers</div>
@@ -42,7 +42,7 @@ import AddButton from './components/addButtonComponent.vue';
 import Table from './components/tableComponent.vue';
 import FormContainer from './components/formContainer.vue';
 import { ref, onMounted } from 'vue';
-const tableHeaders = ['Name', 'Address', 'Services']
+const tableHeaders = ['Name', 'Address', 'Status', 'Services']
 const servTableHeaders = ['Name', 'ChkFiles', 'Image']
 const tableRows = ref([]);
 const servTableRows = ref([]);
@@ -73,7 +73,7 @@ const fetchData = async () => {
     const url = `${root_url}/worker`;
     const response = await fetch(url);
     const data = await response.json();
-    tableRows.value = data.map(item => [item.id, item.addr, item.services]);
+    tableRows.value = data.map(item => [item.id, item.addr, item.status, item.services]);
     console.log(data);
 
     const url2 = `${root_url}/service`;

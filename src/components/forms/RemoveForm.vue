@@ -46,7 +46,11 @@ export default defineComponent({
         toast.error(errorText);
         // Handle the error as needed
       }
-      emit('submit-form');
+      const formData = {
+        worker_name: stopWorker.value,
+        service_name: service.value,
+      };
+      emit('submit-form', formData);
     };
     const workers = ref([]);
     const services = ref([]);

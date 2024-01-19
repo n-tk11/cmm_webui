@@ -47,7 +47,6 @@ export default {
   },
   computed: {
     getFormComponent() {
-      // Return the appropriate form component based on formType
       switch (this.formType) {
         case 'start':
           return StartForm;

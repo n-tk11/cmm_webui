@@ -74,7 +74,7 @@ export default {
 <style scoped>
 /* Add your table styling here */
 table {
-  width: 500px;
+  width: 750px;
   border-collapse: collapse;
   margin-top: 20px;
 }
@@ -85,6 +85,7 @@ td {
   padding: 8px;
   text-align: left;
   table-layout: auto;
+
 }
 
 th {
