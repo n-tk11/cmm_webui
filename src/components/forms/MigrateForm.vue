@@ -106,9 +106,6 @@
     <label for="appArgs">App Arguments:</label>
     <input type="text" id="appArgs" style="width: 300px;" v-model="formData.run.app_args" />
     <br>
-    <label for="imageUrl">Image URL:</label>
-    <input type="text" id="imageUrl" style="width: 300px;" v-model="formData.run.image_url" />
-    <br>
     <button @click="toggleVisibility('run')" style="margin-bottom: 5px;">
       <span v-if="!isRunVisible">▼</span>
       <span v-else>▲</span>
@@ -239,7 +236,7 @@ export default defineComponent({
         });
         if (response.ok) {
           console.log('Form submitted successfully');
-          const msg = 'Service migrated successfully from ' + srcWorker.value + ' to ' + destWorker.value + '!';
+          const msg = 'Service' + '(' + serviceName.value + ')' + ' migrated successfully from ' + srcWorker.value + ' to ' + destWorker.value + '!';
           toast.success(msg)
         } else {
           const errorText = await response.text();

@@ -99,7 +99,7 @@ export default defineComponent({
 
         if (response.ok) {
           console.log('Form submitted successfully');
-          const msg = 'Service(' + formData.value.container_name + ') is now running on ' + runWorker.value;
+          const msg = 'Service(' + service.value + ') is now running on ' + runWorker.value;
           toast.success(msg)
         } else {
           const errorText = await response.text();
