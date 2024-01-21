@@ -67,8 +67,6 @@ const checkIsUp = async () => {
 };
 
 const fetchData = async () => {
-  console.log(import.meta.env.VITE_API_URL)
-
   try {
     const url = `${root_url}/worker`;
     const response = await fetch(url);

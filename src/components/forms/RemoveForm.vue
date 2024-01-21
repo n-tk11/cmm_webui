@@ -25,7 +25,7 @@ export default defineComponent({
     const root_url = import.meta.env.VITE_API_URL;
     const submitForm = async () => {
       try {
-        const url = `${root_url}/v1.0/remove/${stopWorker.value}/${service.value}`;
+        const url = `${root_url}/remove/${stopWorker.value}/${service.value}`;
         const response = await fetch(url, {
           method: 'DELETE',
         });
