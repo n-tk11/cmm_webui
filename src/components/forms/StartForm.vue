@@ -2,7 +2,7 @@
   <div>
     <h2>Start Service Container Configuration Form</h2>
     <label for="workerName">Worker Name:</label>
-    <select id="workerName" v-model="startWorker">
+    <select id="workerName" v-model="startWorker" style="margin-right: 5px;">
       <option v-for="worker in workers" :key="worker" :value="worker">{{ worker }}</option>
       <!-- Add more options as needed -->
     </select>
@@ -201,6 +201,20 @@ div {
 textarea {
   width: 100%;
   height: 80px;
+}
+
+select {
+  margin-left: 3px;
+  margin-right: 15px;
+}
+
+input {
+  margin-left: 3px;
+  margin-right: 15px;
+}
+
+div {
+  line-height: 2;
 }
 </style>
 

@@ -7,7 +7,8 @@
       <div class="worker-container">
         <div class="text-wrapper-17">Workers</div>
         <div class="table-container">
-          <Table :headers="tableHeaders" :rows="tableRows"></Table>
+          <WTable :headers="tableHeaders" :rows="tableRows">
+          </WTable>
           <div class="button-container">
             <button @click="openForm('addWorker')">Add a worker</button>
           </div>
@@ -40,9 +41,10 @@ import Nav from './components/navComponent.vue'
 import { RouterLink, RouterView } from 'vue-router';
 import AddButton from './components/addButtonComponent.vue';
 import Table from './components/tableComponent.vue';
+import WTable from './components/WorkertableComponent.vue';
 import FormContainer from './components/formContainer.vue';
 import { ref, onMounted } from 'vue';
-const tableHeaders = ['Name', 'Address', 'Status', 'Services']
+const tableHeaders = ['Name', 'Address', 'Services', 'Status']
 const servTableHeaders = ['Name', 'ChkFiles', 'Image']
 const tableRows = ref([]);
 const servTableRows = ref([]);
@@ -71,7 +73,7 @@ const fetchData = async () => {
     const url = `${root_url}/worker`;
     const response = await fetch(url);
     const data = await response.json();
-    tableRows.value = data.map(item => [item.id, item.addr, item.status, item.services]);
+    tableRows.value = data.map(item => [item.id, item.addr, item.services, item.status]);
     console.log(data);
 
     const url2 = `${root_url}/service`;

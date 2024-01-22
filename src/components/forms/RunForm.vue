@@ -205,4 +205,18 @@ textarea {
   width: 100%;
   height: 80px;
 }
+
+select {
+  margin-left: 3px;
+  margin-right: 15px;
+}
+
+input {
+  margin-left: 3px;
+  margin-right: 15px;
+}
+
+div {
+  line-height: 2;
+}
 </style>

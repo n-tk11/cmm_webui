@@ -15,15 +15,18 @@
               <div>
                 <ul>
                   <li v-for="(listItem, listIndex) in value.slice(0, 3)" :key="listIndex">
-                    {{ listItem }}
+                    Name:{{ listItem.name }}
+                    Status:<div :style="{ color: getStatusColor(listItem.status) }">{{ listItem.status }}</div>
+
                   </li>
                 </ul>
-                <button @click="toggleList(rowIndex, colIndex)" v-if="value.length > 3">
+                <button @click=" toggleList(rowIndex, colIndex)" v-if="value.length > 3">
                   {{ isListVisible(rowIndex, colIndex) ? 'Less' : 'More' }}
                 </button>
                 <ul v-if="isListVisible(rowIndex, colIndex)" style="margin: 0px;">
                   <li v-for="(listItem, listIndex) in value.slice(3)" :key="listIndex">
-                    {{ listItem }}
+                    Name:{{ listItem.name }}
+                    Status:<div :style="{ color: getStatusColor(listItem.status) }">{{ listItem.status }}</div>
                   </li>
                 </ul>
               </div>
@@ -40,7 +43,11 @@
 </template>
 
 <script>
+import Circle from './statusCircle.vue';
 export default {
+  components: {
+    Circle,
+  },
   props: {
     headers: Array, // Array of header names
     rows: Array,    // Array of rows, where each row is an array of values
@@ -55,6 +62,21 @@ export default {
       const key = `${rowIndex}-${colIndex}`;
       return this.collapsedLists[key];
     },
+    getStatusColor(status) {
+      switch (status) {
+        case 'stopped':
+          return 'red'; // Change this to your desired color for stop status
+        case 'running':
+          return 'green'; // Change this to your desired color for run status
+        // Add more cases based on your actual status values
+        case 'standby':
+          return 'orange';
+        case 'exited':
+          return 'red';
+        default:
+          return 'black'; // Default color for other statuses
+      }
+    },
   },
   data() {
     const initialCollapsedLists = {};
@@ -68,6 +90,7 @@ export default {
       collapsedLists: initialCollapsedLists,
     };
   },
+
 };
 </script>
 
@@ -90,5 +113,24 @@ td {
 
 th {
   background-color: #f2f2f2;
+}
+
+.stop-status .exit-status {
+  color: red;
+}
+
+.standby-status {
+  color: orange;
+}
+
+.run-status {
+  color: green;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  /* Add margin for spacing between list items */
 }
 </style>
