@@ -17,7 +17,8 @@ import StopForm from './forms/StopForm.vue';
 import RemoveForm from './forms/RemoveForm.vue';
 import AddWorkerForm from './forms/AddWorkerForm.vue';
 import AddServiceForm from './forms/AddServiceForm.vue';
-
+import DeleteWorkerForm from './forms/DeleteWorkerForm.vue';
+import DeleteServiceForm from './forms/DeleteServiceForm.vue';
 export default {
   props: {
     formType: String,
@@ -64,6 +65,10 @@ export default {
           return AddWorkerForm;
         case 'addService':
           return AddServiceForm;
+        case 'deleteWorker':
+          return DeleteWorkerForm;
+        case 'deleteService':
+          return DeleteServiceForm;
         default:
           return null; // Default to no form
       }

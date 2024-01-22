@@ -9,8 +9,13 @@
         <div class="table-container">
           <WTable :headers="tableHeaders" :rows="tableRows">
           </WTable>
-          <div class="button-container">
-            <button @click="openForm('addWorker')">Add a worker</button>
+          <div class="button-cover">
+            <div class="button-container">
+              <button @click="openForm('addWorker')">Add a worker</button>
+            </div>
+            <div class="button-container">
+              <button @click="openForm('deleteWorker')">Delete a worker</button>
+            </div>
           </div>
         </div>
       </div>
@@ -20,8 +25,13 @@
         <div class="text-wrapper-18">Services</div>
         <div class="table-container" style="top: 10px;">
           <Table :headers="servTableHeaders" :rows="servTableRows"></Table>
-          <div class="button-container">
-            <button @click="openForm('addService')">Add a service</button>
+          <div class="button-cover">
+            <div class="button-container">
+              <button @click="openForm('addService')">Add a service</button>
+            </div>
+            <div class="button-container">
+              <button @click="openForm('deleteService')">Delete a service</button>
+            </div>
           </div>
         </div>
       </div>
@@ -74,12 +84,20 @@ const fetchData = async () => {
     const url = `${root_url}/worker`;
     const response = await fetch(url);
     const data = await response.json();
+    if (data === null || data.length === 0) {
+      tableRows.value = [];
+      return;
+    }
     tableRows.value = data.sort((a, b) => a.id.localeCompare(b.id)).map(item => [item.id, item.addr, item.services, item.status]);
     console.log(data);
 
     const url2 = `${root_url}/service`;
     const response2 = await fetch(url2);
     const data2 = await response2.json();
+    if (data2 === null || data2.length === 0) {
+      servTableRows.value = [];
+      return;
+    }
     servTableRows.value = data2.sort((a, b) => a.name.localeCompare(b.name)).map(item => {
       const checkpoint = item.chk_files.map(file => {
         const [_, worker, time] = file.split('_');
@@ -202,6 +220,12 @@ const getStatusColor = (status) => {
   margin-left: 30px;
   top: 200px;
   /* Adjust the indentation as needed */
+}
+
+.button-cover {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
 }
 
 .button-container {

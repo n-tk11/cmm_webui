@@ -88,7 +88,11 @@ export default defineComponent({
         const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();
-          workers.value = Array.from(new Set(data.map(item => item.id)));
+          if (data === null || data.length === 0) {
+            workers.value = [];
+            return;
+          }
+          workers.value = data.sort((a, b) => a.id.localeCompare(b.id)).map(item => item.id);
         }
         else {
           throw new Error('Request workers failed!');
@@ -97,7 +101,11 @@ export default defineComponent({
         const response2 = await fetch(url2);
         if (response2.ok) {
           const data2 = await response2.json();
-          services.value = Array.from(new Set(data2.map(item => item.name)));
+          if (data2 === null || data2.length === 0) {
+            services.value = [];
+            return;
+          }
+          services.value = data2.sort((a, b) => a.name.localeCompare(b.name)).map(item => item.name);
         } else {
           throw new Error('Request services failed!');
         }

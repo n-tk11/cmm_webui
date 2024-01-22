@@ -1,14 +1,12 @@
 <template>
   <div>
-    <h2>Stop Form</h2>
-    <label for="workerName">Worker Name:</label>
-    <select id="workerName" v-model="stopWorker">
-      <option v-for="worker in workers" :key="worker" :value="worker">{{ worker }}</option>
-    </select>
-    <label for="containerName">Service Name:</label>
-    <select id="containerName" v-model="service">
+    <h2>Delete a Service</h2>
+    <label for="serviceName">Service Name:</label>
+    <select id="serviceName" v-model="serviceName">
       <option v-for="service in services" :key="service" :value="service">{{ service }}</option>
     </select>
+    <label for="delChk">Delete all related checkpoint files:</label>
+    <input type="checkbox" id="delChk" v-model="delChk" />
     <br>
     <button @click="submitForm">Submit</button>
   </div>
@@ -20,18 +18,21 @@ import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 export default defineComponent({
   setup(props, { emit }) {
-    const stopWorker = ref('');
-    const service = ref('');
+    const serviceName = ref('');
+    const services = ref([]);
+    const delChk = ref(false);
     const root_url = import.meta.env.VITE_API_URL;
     const submitForm = async () => {
       try {
-        const url = `${root_url}/stop/${stopWorker.value}/${service.value}`;
+        const url = `${root_url}/service/${serviceName.value}?delChk=${delChk.value}`;
+        console.log(url);
         const response = await fetch(url, {
-          method: 'POST',
+          method: 'DELETE',
         });
-        if (response.ok) {
+        console.log(serviceName.value);
+        if (response.status === 204) {
           console.log('Form submitted successfully');
-          const msg = `Service(${service.value}) on ${stopWorker.value} is stopped`;
+          const msg = `Service ${serviceName.value} is deleted`;
           toast.success(msg)
         } else {
           const errorText = await response.text();
@@ -45,51 +46,38 @@ export default defineComponent({
         toast.error(errorText);
         // Handle the error as needed
       }
-      const formData = {
-        worker_name: stopWorker.value,
-        service_name: service.value,
-      };
-      emit('submit-form', formData);
+      emit('submit-form');
     };
-    const workers = ref([]);
-    const services = ref([]);
+
     const fetchData = async () => {
       try {
-        const url = `${root_url}/worker`;
+        const url = `${root_url}/service`;
         const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();
           if (data === null || data.length === 0) {
-            workers.value = [];
-            return;
-          }
-          workers.value = data.sort((a, b) => a.id.localeCompare(b.id)).map(item => item.id);
-        } else {
-          throw new Error('Request workers failed!');
-        }
-        const url2 = `${root_url}/service`;
-        const response2 = await fetch(url2);
-        if (response2.ok) {
-          const data2 = await response2.json();
-          if (data2 === null || data2.length === 0) {
             services.value = [];
             return;
           }
-          services.value = data2.sort((a, b) => a.name.localeCompare(b.name)).map(item => item.name);
+          services.value = data.sort((a, b) => a.name.localeCompare(b.name)).map(item => item.name);
         } else {
-          throw new Error('Request services failed!');
+          throw new Error('Request workers failed!');
         }
       } catch (error) {
-        console.log(error);
+        console.error('Error fetching data:', error);
+        const errorText = 'Error fetching data: ' + error.message;
+        toast.error(errorText);
       }
     };
-    onMounted(fetchData);
+    onMounted(() => {
+      fetchData();
+    });
 
     return {
-      workers,
+      delChk,
       services,
-      stopWorker,
-      service,
+      serviceName,
+      fetchData,
       submitForm,
     };
   },
