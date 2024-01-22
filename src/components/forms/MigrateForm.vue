@@ -236,7 +236,7 @@ export default defineComponent({
         });
         if (response.ok) {
           console.log('Form submitted successfully');
-          const msg = 'Service' + '(' + serviceName.value + ')' + ' migrated successfully from ' + srcWorker.value + ' to ' + destWorker.value + '!';
+          const msg = 'Service' + '(' + formData.value.start.container_name + ')' + ' migrated successfully from ' + srcWorker.value + ' to ' + destWorker.value + '!';
           toast.success(msg)
         } else {
           const errorText = await response.text();

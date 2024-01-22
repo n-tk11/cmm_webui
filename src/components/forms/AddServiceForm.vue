@@ -34,7 +34,7 @@ export default defineComponent({
         console.log(service.value);
         if (response.ok) {
           console.log('Form submitted successfully');
-          const msg = `Service ${service.value.serviceName} with image ${service.value.serviceImage} is added`;
+          const msg = `Service ${service.value.name} with image ${service.value.image} is added`;
           toast.success(msg)
         } else {
           const errorText = await response.text();

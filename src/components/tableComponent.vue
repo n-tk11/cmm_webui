@@ -8,7 +8,7 @@
       </thead>
       <tbody>
         <tr v-for="(row, rowIndex) in rows" :key="rowIndex">
-          <td v-for="(value, colIndex) in row" :key="colIndex">
+          <td v-for="(value, colIndex) in row" :key="colIndex" style="vertical-align: top;">
             <!-- Check if the content is an array -->
             <template v-if="Array.isArray(value)">
               <!-- Display array as a list with collapse/expand button -->

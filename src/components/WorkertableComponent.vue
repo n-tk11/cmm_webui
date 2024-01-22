@@ -33,7 +33,7 @@
             </template>
             <!-- If content is not an array, display it normally -->
             <template v-else>
-              {{ value }}
+              <div :style="{ color: getStatusColor(value) }">{{ value }}</div>
             </template>
           </td>
         </tr>
@@ -72,6 +72,10 @@ export default {
         case 'standby':
           return 'orange';
         case 'exited':
+          return 'red';
+        case 'up':
+          return 'green';
+        case 'down':
           return 'red';
         default:
           return 'black'; // Default color for other statuses

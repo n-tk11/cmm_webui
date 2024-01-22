@@ -15,7 +15,8 @@
     <br>
     <label for="imageUrl">Image URL:</label>
     <select id="imageUrl" v-model="formData.image_url">
-      <option v-for="url in servicesChkF" :key="url" :value="url">{{ url }}</option>
+      <option value="">Start From Scratch</option>
+      <option v-for="url in servicesChkF" :key="url" :value="url">{{ formatDate(url) }}</option>
       <!-- <input type="text" id="imageUrl" style="width: 300px;" v-model="formData.image_url" /> -->
     </select>
     <br>
@@ -171,6 +172,11 @@ export default defineComponent({
         console.log(error);
       }
     };
+    const formatDate = (url) => {
+      const [_, worker, time] = url.split('_');
+      const localTime = new Date(time).toLocaleString('en-Gb');
+      return `${localTime}@${worker}`;
+    };
     onMounted(fetchData);
     const isSectionVisible = ref(false);
     const toggleVisibility = () => {
@@ -188,6 +194,7 @@ export default defineComponent({
       toggleVisibility,
       isSectionVisible,
       servicesChkF,
+      formatDate,
     };
   },
 });

@@ -2,8 +2,8 @@
   <div class="home">
     <Nav @open-form="openForm"></Nav>
     <div class="div-3">
-      <div class="text-wrapper-15">Manager: 127.0.0.1:8787</div>
-      <div class="text-wrapper-16">Status: {{ managerStatus }}</div>
+      <div class="text-wrapper-15">Manager: {{ managerAddr }}</div>
+      <div class="text-wrapper-16" :style="{ color: getStatusColor(managerStatus) }">Status: {{ managerStatus }}</div>
       <div class="worker-container">
         <div class="text-wrapper-17">Workers</div>
         <div class="table-container">
@@ -45,11 +45,12 @@ import WTable from './components/WorkertableComponent.vue';
 import FormContainer from './components/formContainer.vue';
 import { ref, onMounted } from 'vue';
 const tableHeaders = ['Name', 'Address', 'Services', 'Status']
-const servTableHeaders = ['Name', 'ChkFiles', 'Image']
+const servTableHeaders = ['Name', 'Checkpoints', 'Image']
 const tableRows = ref([]);
 const servTableRows = ref([]);
 const managerStatus = ref('');
 const root_url = import.meta.env.VITE_API_URL;
+const managerAddr = import.meta.env.VITE_MANAGER;
 
 const checkIsUp = async () => {
   try {
@@ -73,13 +74,20 @@ const fetchData = async () => {
     const url = `${root_url}/worker`;
     const response = await fetch(url);
     const data = await response.json();
-    tableRows.value = data.map(item => [item.id, item.addr, item.services, item.status]);
+    tableRows.value = data.sort((a, b) => a.id.localeCompare(b.id)).map(item => [item.id, item.addr, item.services, item.status]);
     console.log(data);
 
     const url2 = `${root_url}/service`;
     const response2 = await fetch(url2);
     const data2 = await response2.json();
-    servTableRows.value = data2.map(item => [item.name, item.chk_files.reverse(), item.image]);
+    servTableRows.value = data2.sort((a, b) => a.name.localeCompare(b.name)).map(item => {
+      const checkpoint = item.chk_files.map(file => {
+        const [_, worker, time] = file.split('_');
+        const localTime = new Date(time).toLocaleString('en-Gb');
+        return `${localTime}@${worker}`;
+      }).reverse();
+      return [item.name, checkpoint, item.image];
+    });
     console.log(data2);
 
   } catch (error) {
@@ -103,7 +111,13 @@ const closeForm = () => {
   showFormOverlay.value = false;
   currentFormType.value = '';
 }
-
+const getStatusColor = (status) => {
+  if (status === 'up') {
+    return 'green';
+  } else {
+    return 'red';
+  }
+}
 </script>
 
 <style scoped>
@@ -142,7 +156,7 @@ const closeForm = () => {
   font-family: "Inter-Regular", Helvetica;
   font-size: 30px;
   font-weight: 400;
-  left: 350px;
+  left: 450px;
   letter-spacing: 0;
   line-height: normal;
   position: absolute;

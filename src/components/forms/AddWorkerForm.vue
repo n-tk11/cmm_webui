@@ -33,7 +33,7 @@ export default defineComponent({
         });
         if (response.ok) {
           console.log('Form submitted successfully');
-          const msg = `Worker ${worker.value.worker_name} with addr ${worker.value.worker_addr} is added`;
+          const msg = `Worker ${worker.value.worker_id} with addr ${worker.value.addr} is added`;
           toast.success(msg)
         } else {
           const errorText = await response.text();

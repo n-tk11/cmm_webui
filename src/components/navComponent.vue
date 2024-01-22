@@ -1,5 +1,6 @@
 <template>
   <nav class="side-navbar">
+    <h1>CMM</h1>
     <ul>
       <li @click="openForm('start')">Start</li>
       <li @click="openForm('run')">Run</li>
@@ -40,6 +41,7 @@ export default {
 .side-navbar li {
   margin-bottom: 10px;
   cursor: pointer;
+  font-size: 20px;
 }
 
 .side-navbar a {
