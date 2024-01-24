@@ -2,16 +2,15 @@
   <div>
     <h2>Migrate Configuration Form</h2>
     <div style="padding-top: 0px; margin-left: 0px; width:40%; display: table;">
-      <div style="margin-left: 0px; display: table-row">
-        <div style="display: table-cell;">
+      <div style="margin-left: 0px; display: table-row;">
+        <div style="display: table-cell; text-align: center;">
           <label for="sourceName">Source Worker:</label>
           <select id="sourceName" v-model="srcWorker">
             <option v-for="worker in workers" :key="worker" :value="worker">{{ worker }}</option>
           </select>
         </div>
-        <div style="padding: 0px;display: table-cell;"><img class="arrow" alt="Arrow"
-            src="../../assets/right-arrow.svg" /></div>
-        <div style="display: table-cell;">
+        <div style="font-size: 35px;">&rarr;</div>
+        <div style="display: table-cell; text-align: center;">
           <label for="destName">Destination Worker:</label>
           <select id="destName" v-model="destWorker">
             <option v-for="worker in workers" :key="worker" :value="worker">{{ worker }}</option>
@@ -141,6 +140,9 @@
       <textarea id="envs" v-model="runEnvsText" placeholder="ENV1=value1&#10;ENV2=value2"></textarea>
       <br>
     </div>
+    <br><br>
+    <label for="stop">Stop Service at Source:</label>
+    <input type="checkbox" id="stop" v-model="formData.stop" />
     <br>
     <button @click="submitCombinedForm">Submit Migration Form</button>
   </div>
@@ -190,7 +192,7 @@ export default defineComponent({
         verbose: 1,
         envs: [],
       },
-      stop: true,
+      stop: false,
     });
     const runEnvsText = ref('');
     const chkEnvsText = ref('');
@@ -236,7 +238,9 @@ export default defineComponent({
         });
         if (response.ok) {
           console.log('Form submitted successfully');
-          const msg = 'Service' + '(' + formData.value.start.container_name + ')' + ' migrated successfully from ' + srcWorker.value + ' to ' + destWorker.value + '!';
+          const resp = await response.json();
+          const dur = resp.duration;
+          const msg = 'Service' + '(' + formData.value.start.container_name + ')' + ' migrated successfully from ' + srcWorker.value + ' to ' + destWorker.value + '!' + '( Duration: ' + dur + 's)';
           toast.success(msg)
         } else {
           const errorText = await response.text();
