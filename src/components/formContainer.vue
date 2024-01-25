@@ -19,6 +19,7 @@ import AddWorkerForm from './forms/AddWorkerForm.vue';
 import AddServiceForm from './forms/AddServiceForm.vue';
 import DeleteWorkerForm from './forms/DeleteWorkerForm.vue';
 import DeleteServiceForm from './forms/DeleteServiceForm.vue';
+import LoadingSpinner from './LoadingSpinner.vue';
 export default {
   props: {
     formType: String,

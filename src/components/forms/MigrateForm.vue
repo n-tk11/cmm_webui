@@ -144,6 +144,7 @@
     <label for="stop">Stop Service at Source:</label>
     <input type="checkbox" id="stop" v-model="formData.stop" />
     <br>
+    <LoadingSpinner :isLoading="is_Loading" />
     <button @click="submitCombinedForm">Submit Migration Form</button>
   </div>
 </template>
@@ -152,8 +153,13 @@
 import { onMounted, ref, defineComponent } from 'vue';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
+import LoadingSpinner from '../LoadingSpinner.vue';
 export default defineComponent({
+  components: {
+    LoadingSpinner,
+  },
   setup(props, { emit }) {
+    const is_Loading = ref(false);
     const formData = ref({
       run: {
         app_args: '',
@@ -214,6 +220,7 @@ export default defineComponent({
       formData.value.start.mounts.splice(index, 1);
     };
     const submitCombinedForm = async () => {
+      is_Loading.value = true;
       formData.value.run.envs = runEnvsText.value.split('\n').filter(env => env.trim() !== '');
       // Combine form data into a single JSON object
       formData.value.checkpoint.envs = chkEnvsText.value.split('\n').filter(env => env.trim() !== '');
@@ -236,6 +243,7 @@ export default defineComponent({
           },
           body: JSON.stringify(combinedFormData),
         });
+        is_Loading.value = false;
         if (response.ok) {
           console.log('Form submitted successfully');
           const resp = await response.json();
@@ -249,10 +257,13 @@ export default defineComponent({
           toast.error(errorJson.error);
         }
       } catch (error) {
+        is_Loading.value = false;
         console.error('Error submitting form:', error);
         const errorText = 'Error submitting form: ' + error.message;
         toast.error(errorText);
         // Handle the error as needed
+      } finally {
+        is_Loading.value = false;
       }
       emit('submit-form', formData.value);
     };
@@ -328,6 +339,7 @@ export default defineComponent({
     onMounted(fetchData);
 
     return {
+      is_Loading,
       workers,
       services,
       formData,

@@ -45,7 +45,9 @@
       <textarea id="envs" v-model="envsText" placeholder="ENV1=value1&#10;ENV2=value2"></textarea>
     </div>
     <br>
+
     <button @click="submitForm">Submit</button>
+    <LoadingSpinner :isLoading="is_Loading" />
   </div>
 </template>
 
@@ -53,8 +55,13 @@
 import { onMounted, ref, defineComponent } from 'vue';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
+import LoadingSpinner from '../LoadingSpinner.vue';
 export default defineComponent({
+  conponents: {
+    LoadingSpinner,
+  },
   setup(props, { emit }) {
+    const is_Loading = ref(false);
     const formData = ref({
       leave_running: false,
       image_url: '',
@@ -69,11 +76,10 @@ export default defineComponent({
     const chkWorker = ref('');
     const root_url = import.meta.env.VITE_API_URL;
     const submitForm = async () => {
+      is_Loading.value = true;
       // Convert newline-separated strings to arrays
       formData.value.envs = envsText.value.split('\n').filter(env => env.trim() !== '');
-
       // Emit an event to inform the parent component about the form submission
-
       console.log('Form Data:', formData.value);
       try {
         const url = `${root_url}/checkpoint/${chkWorker.value}/${formData.value.container_name}`;
@@ -84,22 +90,29 @@ export default defineComponent({
           },
           body: JSON.stringify(formData.value),
         });
+        is_Loading.value = false;
         if (response.ok) {
           console.log('Form submitted successfully');
           const msg = `Service(${formData.value.container_name}) on ${chkWorker.value} is checkpointed`;
-          toast.success(msg)
-        } else {
+          toast.success(msg);
+        }
+        else {
           const errorText = await response.text();
           const errorJson = JSON.parse(errorText);
           console.error('Error submitting form:', errorJson.error);
           toast.error(errorJson.error);
           // Handle the error as needed
         }
-      } catch (error) {
+      }
+      catch (error) {
+        is_Loading.value = false;
         const errorText = await response.text();
         const errorJson = JSON.parse(errorText);
         console.error('Error submitting form:', errorJson.error);
         toast.error(errorJson.error);
+      }
+      finally {
+        is_Loading.value = false;
       }
       emit('submit-form', formData.value);
     };
@@ -116,7 +129,8 @@ export default defineComponent({
             return;
           }
           workers.value = data.sort((a, b) => a.id.localeCompare(b.id)).map(item => item.id);
-        } else {
+        }
+        else {
           throw new Error('Request workers failed!');
         }
         const url2 = `${root_url}/service`;
@@ -128,10 +142,12 @@ export default defineComponent({
             return;
           }
           services.value = data2.sort((a, b) => a.name.localeCompare(b.name)).map(item => item.name);
-        } else {
+        }
+        else {
           throw new Error('Request services failed!');
         }
-      } catch (error) {
+      }
+      catch (error) {
         console.log(error);
       }
     };
@@ -149,10 +165,12 @@ export default defineComponent({
           formData.value.cpu_budget = data.chk_opt.cpu_budget;
           formData.value.verbose = data.chk_opt.verbose;
           envsText.value = data.chk_opt.envs.join('\n');
-        } else {
+        }
+        else {
           throw new Error('Request services failed!');
         }
-      } catch (error) {
+      }
+      catch (error) {
         console.log(error);
       }
     };
@@ -162,6 +180,7 @@ export default defineComponent({
       isSectionVisible.value = !isSectionVisible.value;
     };
     return {
+      is_Loading,
       workers,
       services,
       submitForm,
@@ -173,6 +192,7 @@ export default defineComponent({
       toggleVisibility,
     };
   },
+  components: { LoadingSpinner }
 });
 </script>
 

@@ -10,6 +10,7 @@
       <option v-for="service in services" :key="service" :value="service">{{ service }}</option>
     </select>
     <br>
+    <LoadingSpinner :isLoading="is_Loading" />
     <button @click="submitForm">Submit</button>
   </div>
 </template>
@@ -18,17 +19,24 @@
 import { onMounted, ref, defineComponent } from 'vue';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
+import LoadingSpinner from '../LoadingSpinner.vue';
 export default defineComponent({
+  components: {
+    LoadingSpinner,
+  },
   setup(props, { emit }) {
+    const is_Loading = ref(false);
     const stopWorker = ref('');
     const service = ref('');
     const root_url = import.meta.env.VITE_API_URL;
     const submitForm = async () => {
+      is_Loading.value = true;
       try {
         const url = `${root_url}/remove/${stopWorker.value}/${service.value}`;
         const response = await fetch(url, {
           method: 'DELETE',
         });
+        is_Loading.value = false;
         if (response.ok) {
           console.log('Form submitted successfully');
           const msg = `Service(${service.value}) on ${stopWorker.value} is removed`;
@@ -41,10 +49,13 @@ export default defineComponent({
           // Handle the error as needed
         }
       } catch (error) {
+        is_Loading.value = false;
         console.error('Error submitting form:', error);
         const errorText = 'Error submitting form: ' + error.message;
         toast.error(errorText);
         // Handle the error as needed
+      } finally {
+        is_Loading.value = false;
       }
       const formData = {
         worker_name: stopWorker.value,
@@ -87,6 +98,7 @@ export default defineComponent({
     onMounted(fetchData);
 
     return {
+      is_Loading,
       workers,
       services,
       stopWorker,

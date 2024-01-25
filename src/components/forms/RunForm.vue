@@ -56,6 +56,7 @@
       <textarea id="envs" v-model="envsText" placeholder="ENV1=value1&#10;ENV2=value2"></textarea>
     </div>
     <br>
+    <LoadingSpinner :isLoading="is_Loading" />
     <button @click="submitForm">Submit</button>
   </div>
 </template>
@@ -64,8 +65,14 @@
 import { onMounted, ref, defineComponent } from 'vue';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
+import LoadingSpinner from '../LoadingSpinner.vue';
+
 export default defineComponent({
+  components: {
+    LoadingSpinner,
+  },
   setup(props, { emit }) {
+    const is_Loading = ref(false);
     const formData = ref({
       app_args: '',
       image_url: '',
@@ -83,10 +90,9 @@ export default defineComponent({
     const service = ref('');
     const root_url = import.meta.env.VITE_API_URL;
     const submitForm = async () => {
+      is_Loading.value = true;
       // Convert newline-separated strings to arrays
       formData.envs = envsText.value.split('\n').filter(env => env.trim() !== '');
-
-
       console.log('Form Data:', formData);
       try {
         const url = `${root_url}/run/${runWorker.value}/${service.value}`;
@@ -97,22 +103,27 @@ export default defineComponent({
           },
           body: JSON.stringify(formData.value),
         });
-
+        is_Loading.value = false;
         if (response.ok) {
           console.log('Form submitted successfully');
           const msg = 'Service(' + service.value + ') is now running on ' + runWorker.value;
-          toast.success(msg)
-        } else {
+          toast.success(msg);
+        }
+        else {
           const errorText = await response.text();
           const errorJson = JSON.parse(errorText);
           console.error('Error submitting form:', errorJson.error);
           toast.error(errorJson.error);
         }
-      } catch (error) {
+      }
+      catch (error) {
+        is_Loading.value = false;
         const errorText = 'Error submitting form: ' + error.message;
         console.error('Error submitting form:', error);
         toast.error(errorText);
         // Handle the error as needed
+      } finally {
+        is_Loading.value = false;
       }
       emit('submit-form', formData.value);
     };
@@ -130,7 +141,8 @@ export default defineComponent({
             return;
           }
           workers.value = data.sort((a, b) => a.id.localeCompare(b.id)).map(item => item.id);
-        } else {
+        }
+        else {
           throw new Error('Request workers failed!');
         }
         const url2 = `${root_url}/service`;
@@ -142,10 +154,12 @@ export default defineComponent({
             return;
           }
           services.value = data2.sort((a, b) => a.name.localeCompare(b.name)).map(item => item.name);
-        } else {
+        }
+        else {
           throw new Error('Request services failed!');
         }
-      } catch (error) {
+      }
+      catch (error) {
         console.log(error);
       }
     };
@@ -165,7 +179,8 @@ export default defineComponent({
           formData.value.leave_stopped = data.run_opt.leave_stopped;
           formData.value.verbose = data.run_opt.verbose;
           envsText.value = data.run_opt.envs.join('\n');
-        } else {
+        }
+        else {
           throw new Error('Request services failed!');
         }
         const url2 = `${root_url}/service/${service.value}`;
@@ -173,10 +188,12 @@ export default defineComponent({
         if (response2.ok) {
           const data2 = await response2.json();
           servicesChkF.value = data2.chk_files.reverse();
-        } else {
+        }
+        else {
           throw new Error('Request services failed!');
         }
-      } catch (error) {
+      }
+      catch (error) {
         console.log(error);
       }
     };
@@ -191,6 +208,7 @@ export default defineComponent({
       isSectionVisible.value = !isSectionVisible.value;
     };
     return {
+      is_Loading,
       workers,
       services,
       formData,
@@ -205,6 +223,7 @@ export default defineComponent({
       formatDate,
     };
   },
+  components: { LoadingSpinner }
 });
 </script>
 

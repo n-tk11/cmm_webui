@@ -48,7 +48,9 @@
       <textarea id="caps" v-model="capsText" placeholder="CAP1&#10;CAP2"></textarea>
     </div>
     <br>
+    <LoadingSpinner :isLoading="is_Loading" />
     <button @click="submitForm">Submit</button>
+
   </div>
 </template>
 
@@ -56,10 +58,13 @@
 import { onMounted, ref, defineComponent } from 'vue';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
-
+import LoadingSpinner from '../LoadingSpinner.vue';
 export default defineComponent({
-
+  components: {
+    LoadingSpinner,
+  },
   setup(props, { emit }) {
+    const is_Loading = ref(false);
     const formData = ref({
       container_name: '',
       image: '',
@@ -133,6 +138,7 @@ export default defineComponent({
     };
     const submitForm = async () => {
       // Convert newline-separated strings to arrays
+      is_Loading.value = true;
       formData.value.envs = envsText.value.split('\n').filter(env => env.trim() !== '');
       formData.value.caps = capsText.value.split('\n').filter(cap => cap.trim() !== '');
       const url = `${root_url}/start/${startWorker.value}/${formData.value.container_name}`;
@@ -144,6 +150,7 @@ export default defineComponent({
           },
           body: JSON.stringify(formData.value),
         });
+        is_Loading.value = false;
         emit('submit-form', formData.value);
         if (response.ok) {
           console.log('Form submitted successfully');
@@ -156,10 +163,14 @@ export default defineComponent({
           toast.error(errorJson.error);
         }
       } catch (error) {
+        is_Loading.value = false;
         const errorText = 'Error submitting form: ' + error.message;
         console.error('Error submitting form:', error);
         toast.error(errorText);
+
         // Handle the error as needed
+      } finally {
+        is_Loading.value = false;
       }
       emit('submit-form', formData.value);
     };
@@ -181,6 +192,7 @@ export default defineComponent({
       isSectionVisible.value = !isSectionVisible.value;
     };
     return {
+      is_Loading,
       formData,
       envsText,
       capsText,

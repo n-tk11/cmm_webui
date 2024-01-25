@@ -53,6 +53,7 @@ import AddButton from './components/addButtonComponent.vue';
 import Table from './components/tableComponent.vue';
 import WTable from './components/WorkertableComponent.vue';
 import FormContainer from './components/formContainer.vue';
+import LoadingSpinner from './components/LoadingSpinner.vue';
 import { ref, onMounted } from 'vue';
 const tableHeaders = ['Name', 'Address', 'Services', 'Status']
 const servTableHeaders = ['Name', 'Checkpoints', 'Image']

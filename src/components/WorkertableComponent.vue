@@ -77,6 +77,8 @@ export default {
           return 'green';
         case 'down':
           return 'red';
+        case 'checkpointed':
+          return 'orange';
         default:
           return 'black'; // Default color for other statuses
       }
