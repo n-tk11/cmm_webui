@@ -12,7 +12,7 @@
     </select>
     <br>
     <label for="appPort">App Port:</label>
-    <input type="text" id="appPort" v-model="formData.app_port" />
+    <textarea id="appPort" v-model="app_ports" placeholder="8080:8080&#10;7777:7777"></textarea>
     <br>
     <div v-for="(mount, index) in formData.mounts" :key="index" style="padding: 5px;">
       <label for="mountType">Mount Type:</label>
@@ -68,7 +68,7 @@ export default defineComponent({
     const formData = ref({
       container_name: '',
       image: '',
-      app_port: '',
+      app_ports: [],
       envs: [],
       mounts: [
         {
@@ -80,7 +80,7 @@ export default defineComponent({
       ],
       caps: [],
     });
-
+    const app_ports = ref('');
     const envsText = ref('');
     const capsText = ref('');
     const workers = ref([]);
@@ -124,7 +124,7 @@ export default defineComponent({
         const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();
-          formData.value.app_port = data.start_opt.app_port;
+          formData.value.app_ports = data.start_opt.app_ports;
           formData.value.mounts = data.start_opt.mounts;
           envsText.value = data.start_opt.envs.join('\n');
           capsText.value = data.start_opt.caps.join('\n');
@@ -139,6 +139,7 @@ export default defineComponent({
     const submitForm = async () => {
       // Convert newline-separated strings to arrays
       is_Loading.value = true;
+      formData.value.app_ports = app_ports.value.split('\n').filter(port => port.trim() !== '');
       formData.value.envs = envsText.value.split('\n').filter(env => env.trim() !== '');
       formData.value.caps = capsText.value.split('\n').filter(cap => cap.trim() !== '');
       const url = `${root_url}/start/${startWorker.value}/${formData.value.container_name}`;
@@ -194,6 +195,7 @@ export default defineComponent({
     return {
       is_Loading,
       formData,
+      app_ports,
       envsText,
       capsText,
       workers,

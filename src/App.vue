@@ -175,7 +175,7 @@ const getStatusColor = (status) => {
   font-family: "Inter-Regular", Helvetica;
   font-size: 30px;
   font-weight: 400;
-  left: 450px;
+  left: 500px;
   letter-spacing: 0;
   line-height: normal;
   position: absolute;

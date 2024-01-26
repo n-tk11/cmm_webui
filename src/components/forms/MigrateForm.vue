@@ -64,7 +64,7 @@
     <h3>Start Configuration(at source)</h3>
 
     <label for="appPort">App Port:</label>
-    <input type="text" id="appPort" v-model="formData.start.app_port" />
+    <textarea id="appPort" v-model="app_ports" placeholder="8080:8080&#10;7777:7777"></textarea>
     <br>
 
     <div v-for="(mount, index) in formData.start.mounts" :key="index">
@@ -176,7 +176,7 @@ export default defineComponent({
       start: {
         container_name: '',
         image: '',
-        app_port: '',
+        app_ports: [],
         envs: [],
         mounts: [
           {
@@ -204,6 +204,7 @@ export default defineComponent({
     const chkEnvsText = ref('');
     const startEnvsText = ref('');
     const capsText = ref('');
+    const app_ports = ref('');
     const serviceName = ref('');
     const srcWorker = ref('');
     const destWorker = ref('');
@@ -226,6 +227,7 @@ export default defineComponent({
       formData.value.checkpoint.envs = chkEnvsText.value.split('\n').filter(env => env.trim() !== '');
       formData.value.start.envs = startEnvsText.value.split('\n').filter(env => env.trim() !== '');
       formData.value.start.caps = capsText.value.split('\n').filter(cap => cap.trim() !== '');
+      formData.value.start.app_ports = app_ports.value.split('\n').filter(port => port.trim() !== '');
       const combinedFormData = {
         ropt: formData.value.run,
         sopt: formData.value.start,
@@ -358,6 +360,7 @@ export default defineComponent({
       isChkVisible,
       isRunVisible,
       isStrVisible,
+      app_ports,
     };
   },
 });
