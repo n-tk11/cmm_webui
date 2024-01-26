@@ -158,7 +158,7 @@ export default defineComponent({
         if (response.ok) {
           const data = await response.json();
           formData.value.leave_running = data.chk_opt.leave_running;
-          formData.value.image_url = data.chk_opt.image_url;
+          formData.value.image_url = "";
           formData.value.passphrase_file = data.chk_opt.passphrase_file;
           formData.value.preserved_paths = data.chk_opt.preserved_paths;
           formData.value.num_shards = data.chk_opt.num_shards;
