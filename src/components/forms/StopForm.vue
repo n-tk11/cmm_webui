@@ -10,6 +10,8 @@
       <option v-for="service in services" :key="service" :value="service">{{ service }}</option>
     </select>
     <br>
+    <LoadingSpinner :isLoading="is_Loading" />
+
     <button @click="submitForm">Submit</button>
   </div>
 </template>
