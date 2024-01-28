@@ -124,7 +124,7 @@ export default defineComponent({
         const response = await fetch(url);
         if (response.ok) {
           const data = await response.json();
-          formData.value.app_ports = data.start_opt.app_ports.join('\n');
+          app_ports.value = data.start_opt.app_ports.join('\n');
           formData.value.mounts = data.start_opt.mounts;
           envsText.value = data.start_opt.envs.join('\n');
           capsText.value = data.start_opt.caps.join('\n');

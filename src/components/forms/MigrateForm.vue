@@ -311,6 +311,7 @@ export default defineComponent({
           formData.value.run = data.run_opt;
           formData.value.start = data.start_opt;
           formData.value.checkpoint = data.chk_opt;
+          formData.value.checkpoint.image_url = "";
           app_ports.value = data.start_opt.app_ports.join('\n');
           runEnvsText.value = data.run_opt.envs.join('\n');
           chkEnvsText.value = data.chk_opt.envs.join('\n');
